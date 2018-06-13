@@ -1,76 +1,22 @@
 <?php
-require_once './data/login.php';
+require_once './database/db.php';
+require_once './src/functions.php';
 
 ob_start();
 
-$dsh = "mysql:host=$db_hostname;dbname=$db_database;charset=utf8";
 try {
-    $DBH = new PDO($dsh, $db_username, $db_password);
-    $DBH->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-    $listCustomersPrepare = $DBH->prepare('SELECT * FROM customers');
-    $listCustomersPrepare->setFetchMode(PDO::FETCH_OBJ);
-    $listOrdersPrepare = $DBH->prepare('SELECT * FROM orders');
-    $listOrdersPrepare->setFetchMode(PDO::FETCH_OBJ);
 
     // Таблица пользователей
-    echo "<div class='task-wrapper'>";
-    echo '<h2>Список всех зарегистрированных пользователей:</h2>';
 
-    $listCustomersPrepare->execute();
-    $tableCustomersRows = '';
-    while ($row = $listCustomersPrepare->fetch()) {
-        $tableCustomersRows .= '<tr>
-                                <td>' . $row->email . '</td>
-                                <td>' . $row->name . '</td>
-                                <td>' . $row->phone . '</td>
-                               </tr>';
-    }
-    $customersTable = '<table>
-                        <tr>
-                            <th>Email</th>
-                            <th>Имя пользователя</th>
-                            <th>Телефон</th>
-                        </tr>' . $tableCustomersRows . '
-                       </table>';
-    echo $customersTable;
-
-    echo '</div>';
+    echo '<div class="task-wrapper"><h2>Список всех зарегистрированных пользователей:</h2>',
+    listCustomers($DBH), '</div>';
 
     // Таблица заказов
-    echo "<div class='task-wrapper'>";
-    echo '<h2>Список всех заказов:</h2>';
 
-    $listOrdersPrepare->execute();
-    $tableOrdersRows = '';
-    while($row = $listOrdersPrepare->fetch()) {
-        $tableOrdersRows .= '<tr>
-                                <td>' . $row->orderid . '</td>
-                                <td>' . $row->customeremail . '</td>
-                                <td>' . $row->dateorder . '</td>
-                                <td>' . $row->shippingaddress . '</td>
-                                <td>' . $row->typepay . '</td>
-                                <td>' . $row->callback . '</td>
-                                <td>' . $row->ordercomments . '</td>
-                              </tr>';
-    }
+    echo '<div class="task-wrapper"><h2>Список всех заказов:</h2>', listOrders($DBH), '</div>';
 
-    $DBH = NULL;
-
-    $ordersTable = '<table>
-                        <tr>
-                            <th>Id заказа</th>
-                            <th>Email пользователя</th>
-                            <th>Дата заказа</th>
-                            <th>Адрес доставки</th>
-                            <th>Тип оплаты</th>
-                            <th>Можно ли перезванивать</th>
-                            <th>Комментарии</th>
-                        </tr>' . $tableOrdersRows . '
-                       </table>';
-    echo $ordersTable;
-    echo '</div>';
 } catch(PDOException $e) {
-    $errLogFile = './data/logs/PDOErrors.txt';
+    $errLogFile = './src/logs/PDOErrors.txt';
     file_put_contents($errLogFile, $e->getMessage(), FILE_APPEND);
 }
 
@@ -84,7 +30,7 @@ ob_end_clean();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./public/css/styles.css">
     <title>Первый выпускной проект от loftschool.com</title>
 </head>
 <body>
