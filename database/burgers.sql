@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jun 13, 2018 at 08:04 PM
+-- Generation Time: Jun 14, 2018 at 05:48 PM
 -- Server version: 5.7.20
 -- PHP Version: 7.2.0
 
@@ -21,34 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `burgers`
 --
-CREATE DATABASE IF NOT EXISTS `burgers` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `burgers`;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `customers`
---
-
-DROP TABLE IF EXISTS `customers`;
-CREATE TABLE `customers` (
-  `email` varchar(128) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `phone` varchar(128) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `customers`
---
-
-INSERT INTO `customers` (`email`, `name`, `phone`) VALUES
-('bnmnb@nbv.bmn', 'josef', '+7 (435) 878 96 36'),
-('bnmnbvmcb@nbv.bmn', 'test', '8094386908'),
-('enmm@nm.gh', 'Max Br', '89067675764'),
-('misha@nbv.bm', 'Misha', '+7 (435) 878 97 89'),
-('mnm@bdfg.vom', 'Rokky', '+7 (346) 275 57 89'),
-('nic@nm.gh', 'Nic Br', '89067675764'),
-('ttt@tyui.jo', 'u909090', '+7 (435) 275 74 26');
 
 -- --------------------------------------------------------
 
@@ -56,47 +28,77 @@ INSERT INTO `customers` (`email`, `name`, `phone`) VALUES
 -- Table structure for table `orders`
 --
 
-DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
-  `orderid` int(11) NOT NULL,
-  `customeremail` varchar(128) NOT NULL,
-  `dateorder` timestamp NULL DEFAULT NULL,
-  `shippingaddress` varchar(255) DEFAULT NULL,
-  `typepay` enum('НАЛИЧНЫМИ','КАРТОЙ') DEFAULT NULL,
-  `callback` enum('НЕ ПЕРЕЗВАНИВАТЬ','МОЖНО ПЕРЕЗВАНИВАТЬ') DEFAULT NULL,
-  `ordercomments` tinytext
+  `id` int(11) UNSIGNED NOT NULL,
+  `userId` int(11) UNSIGNED NOT NULL,
+  `dateOrder` timestamp NOT NULL,
+  `shippingAddress` varchar(255) NOT NULL,
+  `typePayment` enum('НАЛИЧНЫМИ','КАРТОЙ') NOT NULL,
+  `callback` enum('НЕ ПЕРЕЗВАНИВАТЬ','МОЖНО ПЕРЕЗВАНИВАТЬ') NOT NULL,
+  `comments` tinytext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`orderid`, `customeremail`, `dateorder`, `shippingaddress`, `typepay`, `callback`, `ordercomments`) VALUES
-(70, 'bnmnb@nbv.bmn', '2018-06-12 16:22:42', 'ул. Mirnaya  д. 13/3 кв. 12 эт. 2', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'заказ с сайта'),
-(71, 'bnmnb@nbv.bmn', '2018-06-12 16:29:25', 'ул. Mirnaya  д. 13/3 кв. 12 эт. 2', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'заказ с сайта'),
-(72, 'bnmnb@nbv.bmn', '2018-06-12 16:30:47', 'ул. Mirnaya  д. 13/3 кв. 12 эт. 2', 'НАЛИЧНЫМИ', 'МОЖНО ПЕРЕЗВАНИВАТЬ', 'заказ с сайта все готово!!\r\n'),
-(73, 'misha@nbv.bm', '2018-06-12 19:35:49', 'ул. Aviatorov Baltiki  д. 7/1 кв. 86 эт. 8', 'КАРТОЙ', 'МОЖНО ПЕРЕЗВАНИВАТЬ', 'Мишин заказ\r\n'),
-(74, 'misha@nbv.bm', '2018-06-12 19:37:30', 'ул. Aviatorov Baltiki  д. 6/1 кв. 86 эт. 8', 'НАЛИЧНЫМИ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'Мишин заказ 2\r\n'),
-(75, 'ttt@tyui.jo', '2018-06-13 14:53:38', 'ул. ddddddddd  д. 23/1 кв. 22 эт. 1', 'НАЛИЧНЫМИ', 'МОЖНО ПЕРЕЗВАНИВАТЬ', 'dddddddd'),
-(76, 'mnm@bdfg.vom', '2018-06-13 15:09:28', 'ул. gghjhghg  д. 11/2 кв. 2 эт. 2', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'test'),
-(77, 'mnm@bdfg.vom', '2018-06-13 15:11:37', 'ул. gghjhghg  д. 11/2 кв. 2 эт. 5', 'НАЛИЧНЫМИ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'test1');
+INSERT INTO `orders` (`id`, `userId`, `dateOrder`, `shippingAddress`, `typePayment`, `callback`, `comments`) VALUES
+(1, 11, '2018-06-14 14:15:20', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(2, 11, '2018-06-14 14:18:41', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(3, 11, '2018-06-14 14:20:25', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(4, 11, '2018-06-14 14:20:45', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(5, 11, '2018-06-14 14:22:28', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(6, 11, '2018-06-14 14:28:36', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(7, 11, '2018-06-14 14:30:04', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(8, 11, '2018-06-14 14:30:23', 'dbfmgbndmf vbnm vb', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'bn'),
+(9, 20, '2018-06-14 14:33:22', 'ул. sdgdgdf  д. 1/1 кв. 11 эт. 1', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 's'),
+(10, 21, '2018-06-14 14:35:02', 'ул. sdgdgdf  д. 14/17 кв. 11 эт. 1', 'НАЛИЧНЫМИ', 'МОЖНО ПЕРЕЗВАНИВАТЬ', ''),
+(11, 22, '2018-06-14 14:41:20', 'ул. Mirnaya  д. 14/17 кв. 11 эт. 1', 'КАРТОЙ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'протестили'),
+(12, 22, '2018-06-14 14:42:41', 'ул. Mirnaya  д. 14/17 кв. 11 эт. 1', 'НАЛИЧНЫМИ', 'НЕ ПЕРЕЗВАНИВАТЬ', 'протестили');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `name`, `phone`) VALUES
+(7, 'qwqwq@we.aa', 'qwqwq', '121221221'),
+(9, 'qwqwq@we.aaa', 'Greg', '856-34687-578'),
+(10, 'qwqwq@we.aaaa', 'Greg', '856-34687-578'),
+(11, 'qwqwq111@we.aaaa', 'Greg', '856-34687-578'),
+(20, 'mnm@bdfg.vom', 'vasya', '+7 (325) 532 53 64'),
+(21, 'dfgh@bdfg.vom', 'Vasya', '+7 (325) 532 53 64'),
+(22, 'billetter@bdfg.v', 'Юля', '+7 (453) 876 94 56');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `customers`
---
-ALTER TABLE `customers`
-  ADD PRIMARY KEY (`email`);
-
---
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
-  ADD PRIMARY KEY (`orderid`),
-  ADD KEY `customeremail` (`customeremail`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -106,7 +108,13 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `orderid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables
@@ -116,7 +124,7 @@ ALTER TABLE `orders`
 -- Constraints for table `orders`
 --
 ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customeremail`) REFERENCES `customers` (`email`);
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

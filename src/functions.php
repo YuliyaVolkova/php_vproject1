@@ -1,132 +1,106 @@
 <?php
 
 //Файл содержит функции запросов к БД.
-/**
- * @param object $DBH
- */
-// Функция выводит список пользователей
 
-function listCustomers(object $DBH)
+/**
+ * Функция выводит список пользователей
+ * @return array
+ */
+function listCustomers()
 {
-    $listCustomers = $DBH->prepare('SELECT * FROM customers');
-    $listCustomers->setFetchMode(PDO::FETCH_OBJ);
-    $listCustomers->execute();
-    $tableCustomersRows = '';
-    while ($row = $listCustomers->fetch()) {
-        $tableCustomersRows .= '<tr>
-                                <td>' . $row->email . '</td>
-                                <td>' . $row->name . '</td>
-                                <td>' . $row->phone . '</td>
-                               </tr>';
-    }
-    echo '<table>
-           <tr><th>Email</th><th>Имя пользователя</th><th>Телефон</th></tr>'
-            . $tableCustomersRows . '
-          </table>';
+    global $dbh;
+    $sql = 'SELECT * FROM users WHERE 1';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
 /**
- * @param object $DBH
+ * Функция выводит список заказов
+ * @return array
  */
-// Функция выводит список заказов
-
-function listOrders(object $DBH)
+function listOrders()
 {
-    $listOrders = $DBH->prepare('SELECT * FROM orders');
-    $listOrders->setFetchMode(PDO::FETCH_OBJ);
-    $listOrders->execute();
-    $tableOrdersRows = '';
-    while($row = $listOrders->fetch()) {
-        $tableOrdersRows .= '<tr>
-                                <td>' . $row->orderid . '</td>
-                                <td>' . $row->customeremail . '</td>
-                                <td>' . $row->dateorder . '</td>
-                                <td>' . $row->shippingaddress . '</td>
-                                <td>' . $row->typepay . '</td>
-                                <td>' . $row->callback . '</td>
-                                <td>' . $row->ordercomments . '</td>
-                              </tr>';
-    }
-    echo '<table>
-           <tr>
-             <th>Id заказа</th>
-             <th>Email пользователя</th>
-             <th>Дата заказа</th>
-             <th>Адрес доставки</th>
-             <th>Тип оплаты</th>
-             <th>Можно ли перезванивать</th>
-             <th>Комментарии</th>
-            </tr>'
-            . $tableOrdersRows . '
-          </table>';
+    global $dbh;
+    $sql = 'SELECT * FROM orders WHERE 1';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
 /**
- * @param object $DBH
- * @param array $array
- * @return integer
+ * Функция возвращает запись о пользователе в БД по его email-у
+ * @param string $email
  */
-// Функция проверяет наличие пользователя в БД по его email-у
 
-function searchCustomer(object $DBH, array $array) :int
+function searchCustomerByEmail(string $email)
 {
-    $checkCustomer = $DBH->prepare('SELECT * FROM customers WHERE email = :email');
-    $checkCustomer->execute($array);
-    return $checkCustomer->rowCount();
+    global $dbh;
+    $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute(['email' => $email]);
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
 
 /**
- * @param object $DBH
+ * Функция добавляет новую запись в таблицу пользователей
  * @param array $array
  */
-// Функция добавляет новые записи в таблицу пользователей
 
-function addNewCustomer(object $DBH, array $array)
+function addNewCustomer(array $array)
 {
-    $addNewCustomer = $DBH->prepare('INSERT INTO customers (email, name, phone) 
-    VALUES (:email, :name, :phone)');
-    $addNewCustomer->execute($array);
+    global $dbh;
+    $sql = 'INSERT INTO users (email, name, phone) VALUES (:email, :name, :phone)';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute($array);
+    return searchCustomerByEmail($array['email']);
 }
 
 /**
- * @param object $DBH
+ * Функция добавляет новую запись в таблицу заказов
  * @param array $array
  */
-// Функция добавляет новые записи в таблицу заказов
 
-function addNewOrder(object $DBH, array $array)
+function addNewOrder(array $array)
 {
-    $addNewOrder = $DBH->prepare('INSERT INTO orders (customeremail, dateorder, shippingaddress, typepay,
-    callback, ordercomments) VALUES (:email, :time, :address, :payment, :callback, :comments)');
-    $addNewOrder->execute($array);
+    global $dbh;
+    $sql = 'INSERT INTO orders (userId, dateOrder, shippingAddress, typePayment, callback, comments) VALUES (:userId, :dateOrder, :shippingAddress, :typePayment, :callback, :comments)';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute($array);
+    return getLastRecordByUserId($array['userId']);
 }
 
 /**
- * @param object $DBH
- * @param array $array
- * @return integer
+ * Функция возвращает последнюю запись пользователя в таблице заказов по его Id
+ * @param int $userId
  */
-// Функция возвращает ID записи в таблице заказов по email-у заказчика и времени заказа
 
-function getOrderId(object $DBH, array $array) :int
+function getLastRecordByUserId($userId)
 {
-    $getOrderId = $DBH->prepare('SELECT orderid FROM orders WHERE customeremail= :email AND dateorder= :time');
-    $getOrderId->setFetchMode(PDO::FETCH_OBJ);
-    $getOrderId->execute($array);
-    return $getOrderId->fetch()->orderid;
+    global $dbh;
+    $sql = 'SELECT * FROM orders WHERE userId = :userId ORDER BY id DESC LIMIT 1';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute(['userId' => $userId]);
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
 
 /**
- * @param object $DBH
- * @param array $array
- * @return integer
+ * Функция возвращает счетчик заказов пользователя по его Id
+ * @param int $userId
  */
-// Функция возвращает количество заказов запрошенного пользователя по его email-у.
 
-function getAmountOrdersOfCustomer(object $DBH, array $array) :int
+function getCounterOrdersByUserId( int $userId)
 {
-    $getAmountOrdersOfCustomer = $DBH->prepare('SELECT orderid FROM orders WHERE customeremail= :email');
-    $getAmountOrdersOfCustomer->setFetchMode(PDO::FETCH_OBJ);
-    $getAmountOrdersOfCustomer->execute($array);
-    return $getAmountOrdersOfCustomer->rowCount();
+    global $dbh;
+    $sql = 'SELECT * FROM orders WHERE userId = :userId';
+
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute(['userId' => $userId]);
+    return $stmt->rowCount();
 }

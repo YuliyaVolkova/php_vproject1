@@ -2,28 +2,8 @@
 require_once './database/db.php';
 require_once './src/functions.php';
 
-ob_start();
-
-try {
-
-    // Таблица пользователей
-
-    echo '<div class="task-wrapper"><h2>Список всех зарегистрированных пользователей:</h2>',
-    listCustomers($dbh), '</div>';
-
-    // Таблица заказов
-
-    echo '<div class="task-wrapper"><h2>Список всех заказов:</h2>', listOrders($dbh), '</div>';
-
-} catch(PDOException $e) {
-    $errLogFile = './src/logs/PDOErrors.txt';
-    file_put_contents($errLogFile, $e->getMessage(), FILE_APPEND);
-    echo $e->getMessage();
-}
-
-$content = ob_get_contents();
-ob_end_clean();
-
+$listCustomers = listCustomers();
+$listOrders = listOrders();
 ?>
 
 <!doctype html>
@@ -37,7 +17,50 @@ ob_end_clean();
 <body>
 <div class="container">
     <h1 class="title">Административная панель</h1>
-    <?= $content ?>
+    <div class="task-wrapper">
+        <h2>Список всех зарегистрированных пользователей:</h2>
+        <table>
+            <tr>
+                <th>Id пользователя</th>
+                <th>Email</th>
+                <th>Имя пользователя</th>
+                <th>Телефон</th>
+            </tr>
+            <?php foreach($listCustomers as $value) : ?>
+                <tr>
+                    <td><?= $value->id ?></td>
+                    <td><?= $value->email ?></td>
+                    <td><?= $value->name  ?></td>
+                    <td><?= $value->phone ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+    <div class="task-wrapper">
+        <h2>Список всех заказов:</h2>
+        <table>
+            <tr>
+                <th>Id заказа</th>
+                <th>Id пользователя</th>
+                <th>Дата заказа</th>
+                <th>Адрес доставки</th>
+                <th>Тип оплаты</th>
+                <th>Можно ли перезванивать</th>
+                <th>Комментарии</th>
+            </tr>
+            <?php foreach($listOrders as $value) : ?>
+                <tr>
+                    <td><?= $value->id ?></td>
+                    <td><?= $value->userId  ?></td>
+                    <td><?= $value->dateOrder ?></td>
+                    <td><?= $value->shippingAddress ?></td>
+                    <td><?= $value->typePayment ?></td>
+                    <td><?= $value->callback ?></td>
+                    <td><?= $value->comments ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
 </div>
 </body>
 </html>

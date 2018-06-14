@@ -7,5 +7,4 @@ try {
 } catch(PDOException $e) {
     $errLogFile = './src/logs/PDOErrors.txt';
     file_put_contents($errLogFile, $e->getMessage(), FILE_APPEND);
-    echo $e->getMessage();
 }
