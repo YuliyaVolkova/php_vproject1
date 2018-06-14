@@ -1,5 +1,5 @@
 <?php
-$db_hostname = 'localhost';
-$db_database = 'burgers';
-$db_username = 'root';
-$db_password = '';
+$dbHostname = 'localhost';
+$dbDatabase = 'burgers';
+$dbUsername = 'root';
+$dbPassword = '';

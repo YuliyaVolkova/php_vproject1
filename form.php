@@ -33,14 +33,14 @@ $newOrder = [
 
 try {
 
-    $DBH->beginTransaction();
+    $dbh->beginTransaction();
 
-    if(searchCustomer($DBH, array('email' => $dataFromRequest['email'])) === 0) {
-        addNewCustomer($DBH, $newUser);
+    if(searchCustomer($dbh, array('email' => $dataFromRequest['email'])) === 0) {
+        addNewCustomer($dbh, $newUser);
     }
-    addNewOrder($DBH, $newOrder);
-    $orderId = getOrderId($DBH, array('email' => $dataFromRequest['email'], 'time' => $dataFromRequest['time']));
-    $ordersAmount = getAmountOrdersOfCustomer($DBH, array('email' => $dataFromRequest['email']));
+    addNewOrder($dbh, $newOrder);
+    $orderId = getOrderId($dbh, array('email' => $dataFromRequest['email'], 'time' => $dataFromRequest['time']));
+    $ordersAmount = getAmountOrdersOfCustomer($dbh, array('email' => $dataFromRequest['email']));
     $mesCounterOrders = ($ordersAmount === 1) ?
         'Спасибо - это ваш первый заказ' : 'Спасибо! Это уже ' . $ordersAmount .' заказ';
 
@@ -65,7 +65,7 @@ try {
                 <p>Файл записан ' . date('Y-m-d H-i-s') . "</p>".PHP_EOL;
     $mailFile = './src/mails/orders.txt';
     file_put_contents($mailFile, $order, FILE_APPEND);
-    $DBH->commit();
+    $dbh->commit();
     echo 'ok';
 } catch(PDOException $e) {
     $errLogFile = './src/logs/PDOErrors.txt';

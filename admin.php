@@ -9,15 +9,16 @@ try {
     // Таблица пользователей
 
     echo '<div class="task-wrapper"><h2>Список всех зарегистрированных пользователей:</h2>',
-    listCustomers($DBH), '</div>';
+    listCustomers($dbh), '</div>';
 
     // Таблица заказов
 
-    echo '<div class="task-wrapper"><h2>Список всех заказов:</h2>', listOrders($DBH), '</div>';
+    echo '<div class="task-wrapper"><h2>Список всех заказов:</h2>', listOrders($dbh), '</div>';
 
 } catch(PDOException $e) {
     $errLogFile = './src/logs/PDOErrors.txt';
     file_put_contents($errLogFile, $e->getMessage(), FILE_APPEND);
+    echo $e->getMessage();
 }
 
 $content = ob_get_contents();
