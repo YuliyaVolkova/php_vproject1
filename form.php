@@ -22,22 +22,13 @@ function getData()
 
 /**
  * Функция возвращает пользователя из БД, если он существует или создает нового
- * @param string $email
+ * @param array $data
  */
 
-function checkUser(string $email)
+function checkUser(array $data)
 {
-    $user = searchCustomerByEmail($email);
-    if($user) {
-        return $user;
-    }
-    $data = getData();
-    $newUser = [
-        'email' => $data['email'],
-        'name' => $data['name'],
-        'phone' => $data['phone']
-    ];
-    return addNewCustomer($newUser);
+    $user = searchCustomerByEmail($data['email']);
+    return ($user) ? $user : addNewCustomer($data);
 }
 
 /**
@@ -70,10 +61,15 @@ function sendMail(int $orderId, int $counter, string $time, string $address)
  * Основной скрипт
  */
 $data = getData();
+$user = [
+        'email' => $data['email'],
+        'name' => $data['name'],
+        'phone' => $data['phone']
+        ];
 try {
     $dbh->beginTransaction();
     $dataOrder = [
-        'userId' => checkUser($data['email'])->id,
+        'userId' => checkUser($user)->id,
         'dateOrder' => $data['orderTime'],
         'shippingAddress' => $data['address'],
         'typePayment' => $data['payment'],
