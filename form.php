@@ -86,7 +86,7 @@ try {
 } catch (Exception $e) {
     $dbh->rollBack();
     $file = './src/logs/error.txt';
-    file_get_contents($file, $e->getMessage(), FILE_APPEND);
+    file_put_contents($file, $e->getMessage(), FILE_APPEND);
 }
 $counter = getCounterOrdersByUserId($dataOrder['userId']);
 sendMail($newOrder->id, $counter, $dataOrder['dateOrder'], $dataOrder['shippingAddress']);
