@@ -68,7 +68,8 @@ function addNewCustomer(array $array)
 function addNewOrder(array $array)
 {
     global $dbh;
-    $sql = 'INSERT INTO orders (userId, dateOrder, shippingAddress, typePayment, callback, comments) VALUES (:userId, :dateOrder, :shippingAddress, :typePayment, :callback, :comments)';
+    $sql = 'INSERT INTO orders (userId, dateOrder, shippingAddress, typePayment, callback, comments)
+    VALUES (:userId, :dateOrder, :shippingAddress, :typePayment, :callback, :comments)';
 
     $stmt = $dbh->prepare($sql);
     $stmt->execute($array);
