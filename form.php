@@ -41,25 +41,26 @@ function checkUser(string $email)
 }
 
 /**
- * Функция заносит новый заказ в БД и отправляет письмо с данными заказа в файл src/mails/orders.txt
- * @param array $order
+ * Функция отправляет письмо с данными заказа в файл ./src/mails/orders.txt
+ * @param int $orderId
+ * @param int $counter
+ * @param string $time
+ * @param string $address
  */
 
-function sendMail($order)
+function sendMail(int $orderId, int $counter, string $time, string $address)
 {
-    $id = addNewOrder($order)->id;
-    $ordersCounter = getCounterOrdersByUserId($order['userId']);
-    $messageCounter = ($ordersCounter === 1) ?
-        'Спасибо - это ваш первый заказ!' : 'Спасибо! Это уже ' . $ordersCounter .' заказ';
+    $messageThank = ($counter === 1) ?
+        'Спасибо - это ваш первый заказ!' : 'Спасибо! Это уже ' . $counter .' заказ';
 
-    $order = '<h3>Заказ № ' . $id . '</h3>
-              <div><span>Дата заказа: ' . $order['dateOrder'] . '</span></div>
-              <h5>Ваш заказ будет доставлен по адресу <strong>' . $order['shippingAddress'] . '</strong></h5>
+    $order = '<h3>Заказ № ' . $orderId . '</h3>
+              <div><span>Дата заказа: ' . $time . '</span></div>
+              <h5>Ваш заказ будет доставлен по адресу <strong>' . $address . '</strong></h5>
               <table>
                   <tr><th>Название сета</th><th>Количество</th><th>Цена</th><th>Валюта</th></tr>
                   <tr<th>DarkBeefBurger</th><th>1</th><th>500</th><th>руб.</th></tr>
               </table>
-              <h6>' . $messageCounter . '</h6>
+              <h6>' . $messageThank . '</h6>
               <p>Файл записан ' . date('Y-m-d H-i-s') . "</p>".PHP_EOL;
     $mailFile = './src/mails/orders.txt';
     file_put_contents($mailFile, $order, FILE_APPEND);
@@ -68,20 +69,24 @@ function sendMail($order)
 /**
  * Основной скрипт
  */
-
-$dbh->beginTransaction();
-
 $data = getData();
-$newOrder = [
-    'userId' => checkUser($data['email'])->id,
-    'dateOrder' => $data['orderTime'],
-    'shippingAddress' => $data['address'],
-    'typePayment' => $data['payment'],
-    'callback' => $data['callback'],
-    'comments' => $data['comments']
-];
-sendMail($newOrder);
-
-$dbh->commit();
-
-echo 'ok';
+try {
+    $dbh->beginTransaction();
+    $dataOrder = [
+        'userId' => checkUser($data['email'])->id,
+        'dateOrder' => $data['orderTime'],
+        'shippingAddress' => $data['address'],
+        'typePayment' => $data['payment'],
+        'callback' => $data['callback'],
+        'comments' => $data['comments']
+    ];
+    $newOrder = addNewOrder($dataOrder);
+    $dbh->commit();
+    echo 'ok';
+} catch (Exception $e) {
+    $dbh->rollBack();
+    $file = './src/logs/error.txt';
+    file_get_contents($file, $e->getMessage(), FILE_APPEND);
+}
+$counter = getCounterOrdersByUserId($dataOrder['userId']);
+sendMail($newOrder->id, $counter, $dataOrder['dateOrder'], $dataOrder['shippingAddress']);
