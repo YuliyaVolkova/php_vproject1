@@ -32,26 +32,32 @@ function checkUser(array $data)
 }
 
 /**
- * Функция отправляет письмо с данными заказа в файл ./src/mails/orders.txt
- * @param int $orderId
- * @param int $counter
- * @param string $time
- * @param string $address
+ * Функция возвращает количество заказов по id пользователя
+ * @param int $userId
+ * @return string
  */
 
-function sendMail(int $orderId, int $counter, string $time, string $address)
+function counterOrders(int $userId)
 {
-    $messageThank = ($counter === 1) ?
+    $counter = getCounterOrdersByUserId($userId);
+    return ($counter === 1) ?
         'Спасибо - это ваш первый заказ!' : 'Спасибо! Это уже ' . $counter .' заказ';
+}
 
-    $order = '<h3>Заказ № ' . $orderId . '</h3>
-              <div><span>Дата заказа: ' . $time . '</span></div>
-              <h5>Ваш заказ будет доставлен по адресу <strong>' . $address . '</strong></h5>
+/**
+ * Функция отправляет письмо с данными заказа в файл ./src/mails/orders.txt
+ */
+
+function sendMail($order)
+{
+    $order = '<h3>Заказ № ' . $order->id . '</h3>
+              <div><span>Дата заказа: ' . $order->dateOrder . '</span></div>
+              <h5>Ваш заказ будет доставлен по адресу <strong>' . $order->shippingAddress . '</strong></h5>
               <table>
                   <tr><th>Название сета</th><th>Количество</th><th>Цена</th><th>Валюта</th></tr>
                   <tr<th>DarkBeefBurger</th><th>1</th><th>500</th><th>руб.</th></tr>
               </table>
-              <h6>' . $messageThank . '</h6>
+              <h6>' . counterOrders($order->userId) . '</h6>
               <p>Файл записан ' . date('Y-m-d H-i-s') . "</p>".PHP_EOL;
     $mailFile = './src/mails/orders.txt';
     file_put_contents($mailFile, $order, FILE_APPEND);
@@ -84,5 +90,4 @@ try {
     $file = './src/logs/error.txt';
     file_put_contents($file, $e->getMessage(), FILE_APPEND);
 }
-$counter = getCounterOrdersByUserId($dataOrder['userId']);
-sendMail($newOrder->id, $counter, $dataOrder['dateOrder'], $dataOrder['shippingAddress']);
+sendMail($newOrder);
